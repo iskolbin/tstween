@@ -15,17 +15,13 @@ export type CompleteCallback = ( o: Object ) => void
 
 export type StopCallback = ( o: Object ) => void
 
-export type TweenPoint<T> = [keyof T,number]
-
-export type TweenPartial<T> = { [P in keyof T]: number }
-
+// TODO refactor any
+export type TweenPartial<T> = { [P in keyof T]: any }
 
 export class Tween<T> {
-	protected _valuesStart: TweenPartial<T> 	//	Partial<T>
-	protected _valuesEnd: TweenPartial<T>//{ [P in keyof T]: number }
-	//Partial<T>
-	protected _valuesStartRepeat: TweenPartial<T>//{ [P in keyof T]: number }
-	//Partial<T>
+	protected _valuesStart: TweenPartial<T>
+	protected _valuesEnd: TweenPartial<T>
+	protected _valuesStartRepeat: TweenPartial<T>
 	protected _duration = 1000
 	protected _repeat = 0
 	protected _repeatDelayTime?: number = undefined
@@ -46,7 +42,6 @@ export class Tween<T> {
 	constructor( 
 		protected _pool: TweenPool,
 		protected _object: T ) {
-			//{string: number}) {
 	}
 
 	to( properties: TweenPartial<T>, duration?: number ): Tween<T> {
@@ -69,7 +64,6 @@ export class Tween<T> {
 
 		for ( let property in _valuesEnd ) {
 			// Check if an Array was provided as property value
-			/*
 			if ( _valuesEnd[property] instanceof Array ) {
 				const endValue: any = _valuesEnd[property]
 				if ( endValue.length === 0 ) {
@@ -78,24 +72,19 @@ export class Tween<T> {
 				// Create a local copy of the Array with the start value at the front
 				_valuesEnd[property] = [_object[property]].concat(_valuesEnd[property])
 			}
-			 */
 
 			// If `to()` specifies a property that doesn't exist in the source object,
-			/*
 			// we should not set that property in the object
 			if ( _object[property] === undefined ) {
 				continue
 			}
-			 */
 
 			// Save the starting value.
 			_valuesStart[property] = Number( _object[property] )
-				/*
 			if ( _valuesStart[property] !== undefined && (_valuesStart[property] instanceof Array) === false ) {
 				_valuesStart[property] *= 1.0 // Ensures we're using numbers, not strings
 			}
-				 */
-			_valuesStartRepeat[property] = _valuesStart[property] // || 0
+			_valuesStartRepeat[property] = _valuesStart[property] || 0
 		}
 		return this
 	}
@@ -211,15 +200,15 @@ export class Tween<T> {
 			}
 
 			const start: number = _valuesStart[property]
-			//const end: number | string | number[] = _valuesEnd[property]
-			const end: number | string = _valuesEnd[property]
+			// TODO remove any
+			const end: any = _valuesEnd[property]
+			//const end: number | string = _valuesEnd[property]
 
-				/*
 			const {_interpolationFunction} = this
-			if ( end instanceof Array<any> ) {
-				_object[property] = _interpolationFunction( end, value )
-			} else {
-				*/
+			if ( end instanceof Array ) {// Array<any> ) {
+				// TODO it's hack
+				(<any>_object)[property] = _interpolationFunction( end, value )
+			} else  {
 				// Parses relative end values with start as base (e.g.: +10, -3)
 				if ( typeof end === 'string' ) {
 					let end_: number
@@ -228,11 +217,10 @@ export class Tween<T> {
 					} else {
 						end_ = parseFloat( end )
 					}
-					_object[property] = start + (end_ - start) * value
+					// TODO it's hack
+					(<any>_object)[property] = start + (end_ - start) * value
 				}
-				/*
 			}
-				 */
 		}
 
 		if ( this._onUpdateCallback ) {
