@@ -236,12 +236,9 @@ export class Tween<T> {
 
 				// Reassign starting values, restart by making startTime = now
 				for ( const property in _valuesStartRepeat ) {
-					/*
 					if ( typeof _valuesEnd[property] === 'string') {
 						_valuesStartRepeat[property] = _valuesStartRepeat[property] + _valuesEnd[property]
 					}
-
-					 */
 
 					if ( _yoyo ) {
 						const tmp = _valuesStartRepeat[property]
