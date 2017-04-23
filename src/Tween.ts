@@ -62,7 +62,7 @@ export class Tween<T> {
 
 		const {_valuesStart,_valuesStartRepeat,_valuesEnd,_object} = this
 
-		for ( let property in _valuesEnd ) {
+		for ( const property in _valuesEnd ) {
 			// Check if an Array was provided as property value
 			if ( _valuesEnd[property] instanceof Array ) {
 				const endValue: any = _valuesEnd[property]
@@ -235,7 +235,7 @@ export class Tween<T> {
 				}
 
 				// Reassign starting values, restart by making startTime = now
-				for ( let property in _valuesStartRepeat ) {
+				for ( const property in _valuesStartRepeat ) {
 					/*
 					if ( typeof _valuesEnd[property] === 'string') {
 						_valuesStartRepeat[property] = _valuesStartRepeat[property] + _valuesEnd[property]
