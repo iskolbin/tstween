@@ -1,10 +1,10 @@
 let now: () => number
 
-declare const process: any
+declare const process: undefined | { hrtime: () => [number,number] }
 
 if ( typeof window === 'undefined' && typeof process !== 'undefined' ) {
 	// In node.js, use process.hrtime.
-	now = function () {
+	now = () => {
 		const [seconds, nanoseconds] = process.hrtime()
 		return seconds * 1000 + nanoseconds / 1000000;
 	}

@@ -1,6 +1,6 @@
 import { TweenPool } from './TweenPool'
-import { Linear as LinearInterpolation } from './Interpolation'
-import { Linear as LinearEasing } from './Easing'
+import { Line } from './Interpolation'
+import { Linear } from './Easing'
 import { now } from './now'
 
 export type Easing = ( value: number ) => number
@@ -15,27 +15,20 @@ export type CompleteCallback = ( o: Object ) => void
 
 export type StopCallback = ( o: Object ) => void
 
-export type TweenPoint<T> = [keyof T,number]
-
-export type TweenPartial<T> = { [P in keyof T]: number }
-
+export type TweenedProperties<T> = { [P in keyof T]: number }
 
 export class Tween<T> {
-	protected _valuesStart: TweenPartial<T> 	//	Partial<T>
-	protected _valuesEnd: TweenPartial<T>//{ [P in keyof T]: number }
-	//Partial<T>
-	protected _valuesStartRepeat: TweenPartial<T>//{ [P in keyof T]: number }
-	//Partial<T>
-	protected _duration = 1000
+	protected _valuesStart: TweenedProperties<T>
+	protected _valuesStartRepeat: TweenedProperties<T>
 	protected _repeat = 0
-	protected _repeatDelayTime?: number = undefined
+	protected _repeatDelayTime?: number
 	protected _yoyo = false
 	protected _isPlaying = false
 	protected _reversed = false
 	protected _delayTime = 0
 	protected _startTime = -1
-	protected _easingFunction: Easing = LinearEasing
-	protected _interpolationFunction: Interpolation = LinearInterpolation
+	protected _easingFunction: Easing = Linear
+	protected _interpolationFunction: Interpolation = Line
 	protected _chainedTweens: Tween<any>[] = []
 	protected _onStartCallback?: StartCallback
 	protected _onStartCallbackFired = false
@@ -45,57 +38,24 @@ export class Tween<T> {
 
 	constructor( 
 		protected _pool: TweenPool,
-		protected _object: T ) {
-			//{string: number}) {
+		protected _object: T,
+		protected _valuesEnd: TweenedProperties<T>,
+		protected _duration: number = 1000) {
 	}
 
-	to( properties: TweenPartial<T>, duration?: number ): Tween<T> {
-		this._valuesEnd = properties
-		if ( duration !== undefined ) {
-			this._duration = duration
-		}
-		return this
-	}
-
-	start( time?: number ): Tween<T> {
+	start( time: number = now() ): Tween<T> {
 		this._pool.add( this )
 
 		this._isPlaying = true
 		this._onStartCallbackFired = false
-		this._startTime = time !== undefined ? time : now()
-		this._startTime += this._delayTime
-
+		this._startTime = time + this._delayTime
+		this._valuesStart = (<any>{})
+		this._valuesStartRepeat = (<any>{})
 		const {_valuesStart,_valuesStartRepeat,_valuesEnd,_object} = this
 
-		for ( let property in _valuesEnd ) {
-			// Check if an Array was provided as property value
-			/*
-			if ( _valuesEnd[property] instanceof Array ) {
-				const endValue: any = _valuesEnd[property]
-				if ( endValue.length === 0 ) {
-					continue
-				}
-				// Create a local copy of the Array with the start value at the front
-				_valuesEnd[property] = [_object[property]].concat(_valuesEnd[property])
-			}
-			 */
-
-			// If `to()` specifies a property that doesn't exist in the source object,
-			/*
-			// we should not set that property in the object
-			if ( _object[property] === undefined ) {
-				continue
-			}
-			 */
-
-			// Save the starting value.
+		for ( const property in _valuesEnd ) {
 			_valuesStart[property] = Number( _object[property] )
-				/*
-			if ( _valuesStart[property] !== undefined && (_valuesStart[property] instanceof Array) === false ) {
-				_valuesStart[property] *= 1.0 // Ensures we're using numbers, not strings
-			}
-				 */
-			_valuesStartRepeat[property] = _valuesStart[property] // || 0
+			_valuesStartRepeat[property] = _valuesStart[property]
 		}
 		return this
 	}
@@ -204,35 +164,18 @@ export class Tween<T> {
 
 		const value: number = this._easingFunction( elapsed )
 
-		for ( let property in _valuesEnd ) {
+		for ( const property in _valuesEnd ) {
 			// Don't update properties that do not exist in the source object
 			if (_valuesStart[property] === undefined) {
 				continue
 			}
 
-			const start: number = _valuesStart[property]
-			//const end: number | string | number[] = _valuesEnd[property]
-			const end: number | string = _valuesEnd[property]
-
-				/*
-			const {_interpolationFunction} = this
-			if ( end instanceof Array<any> ) {
-				_object[property] = _interpolationFunction( end, value )
-			} else {
-				*/
-				// Parses relative end values with start as base (e.g.: +10, -3)
-				if ( typeof end === 'string' ) {
-					let end_: number
-					if ( (<string>end).charAt(0) === '+' || (<string>end).charAt(0) === '-' ) {
-						end_ = start + parseFloat( end )
-					} else {
-						end_ = parseFloat( end )
-					}
-					_object[property] = start + (end_ - start) * value
-				}
-				/*
-			}
-				 */
+			const start = _valuesStart[property]
+			const end_ = _valuesEnd[property];
+			// FIXME
+			// hacky hack, i don't know how to ensure that object property
+			// type and valuesEnd property types are numbers in the same time
+			(<any>_object)[property] = start + (end_ - start) * value
 		}
 
 		if ( this._onUpdateCallback ) {
@@ -242,19 +185,10 @@ export class Tween<T> {
 		if ( elapsed === 1 ) {
 			const {_repeat,_valuesStartRepeat,_yoyo,_reversed,_repeatDelayTime} = this
 			if ( _repeat > 0 ) {
-				if ( isFinite( _repeat )) {
-					this._repeat--
-				}
+				this._repeat--
 
 				// Reassign starting values, restart by making startTime = now
 				for ( let property in _valuesStartRepeat ) {
-					/*
-					if ( typeof _valuesEnd[property] === 'string') {
-						_valuesStartRepeat[property] = _valuesStartRepeat[property] + _valuesEnd[property]
-					}
-
-					 */
-
 					if ( _yoyo ) {
 						const tmp = _valuesStartRepeat[property]
 						_valuesStartRepeat[property] = _valuesEnd[property]

@@ -1,8 +1,12 @@
 import { now } from './now'
-import { Tween } from './Tween'
+import { Tween, TweenedProperties } from './Tween'
 
 export class TweenPool {
 	protected _tweens: Tween<any>[] = []
+	
+	tween<T>( obj: T, properties: TweenedProperties<T>, duration: number = 1000 ): Tween<T> {
+		return new Tween<T>( this, obj, properties, duration )
+	}
 
 	add( tween: Tween<any> ): number {
 		return this._tweens.push( tween )
@@ -44,10 +48,6 @@ export class TweenPool {
 		}
 
 		return true
-	}
-
-	tweens(): Tween<any>[] {
-		return this._tweens
 	}
 
 	get size(): number {
