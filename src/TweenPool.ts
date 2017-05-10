@@ -12,6 +12,10 @@ export class TweenPool {
 		return this._tweens.push( tween )
 	}
 
+	tween<T>( o: T ): Tween<T> {
+		return new Tween( this, o )
+	}
+
 	clear(): void {
 		this._tweens = []
 	}
