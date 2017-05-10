@@ -66,7 +66,7 @@ export function QuinticInOut( k: number ): number {
 	return 0.5 * ((k -= 2) * k * k * k * k + 2)
 }
 
-export function SinusoidaIn( k: number ): number {
+export function SinusoidalIn( k: number ): number {
 	return 1 - Math.cos( k * HALF_PI )
 }
 
