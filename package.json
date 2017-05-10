@@ -3,7 +3,7 @@
   "main": "./lib/index.js",
   "repository": "github.com/iskolbin/tstween",
   "description": "Tween.js inspired/port to TS",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "scripts": {
     "lib": "./node_modules/typescript/bin/tsc",
