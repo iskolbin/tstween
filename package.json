@@ -6,7 +6,7 @@
   "version": "0.2.4",
   "license": "MIT",
   "scripts": {
-    "build": "./node_modules/typescript/bin/tsc",
+    "build": "rm lib/*; ./node_modules/typescript/bin/tsc",
 		"page": "./node_modules/typescript/bin/tsc -m amd --outFile public/dist.js -d false --sourceMap false",
     "prepublish": "npm run build"
   },
