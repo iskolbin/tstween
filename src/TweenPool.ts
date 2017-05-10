@@ -4,8 +4,16 @@ import { Tween, TweenedProperties } from './Tween'
 export class TweenPool {
 	protected _tweens: Tween<any>[] = []
 	
-	tween<T>( obj: T, properties: TweenedProperties<T>, duration: number = 1000 ): Tween<T> {
+	seek<T>( obj: T, properties: TweenedProperties<T>, duration: number = 1000 ): Tween<T> {
 		return new Tween<T>( this, obj, properties, duration )
+	}
+
+	move<T>( obj: T, properties: TweenedProperties<T>, duration: number = 1000 ): Tween<T> {
+		const moveProperties: TweenedProperties<T> = (<any>{})
+		for ( const k in properties ) {
+			moveProperties[k] = (<any>obj)[k] + properties[k]
+		}
+		return this.seek<T>( obj, moveProperties, duration )
 	}
 
 	add( tween: Tween<any> ): number {

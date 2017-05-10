@@ -2,6 +2,14 @@ const PI = Math.PI
 const HALF_PI = PI / 2
 const FIVE_PI = 5 * PI
 
+export function StepIn( k: number ): number {
+	return k < 1 ? 0 : 1
+}
+
+export function StepOut( k: number ): number {
+	return k > 0 ? 1 : 0
+}
+
 export function Linear( k: number ): number {
 	return k
 }
