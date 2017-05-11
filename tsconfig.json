@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"outDir": "./lib",
 		"module": "umd",
+		"moduleResolution": "node",
 		"strict": true,
 		"noImplicitAny": true,
 		"noImplicitThis": true,

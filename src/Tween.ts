@@ -1,7 +1,7 @@
 import { TweenPool } from './TweenPool'
 import { Line } from './Interpolation'
 import { Linear } from './Easing'
-import { now } from './now'
+import { now } from 'tsnow'
 
 export type Easing = ( value: number ) => number
 

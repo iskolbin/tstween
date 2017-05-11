@@ -1,4 +1,4 @@
-import { now } from './now'
+import { now } from 'tsnow'
 import { Tween, TweenedProperties } from './Tween'
 
 export class TweenPool {
@@ -16,8 +16,9 @@ export class TweenPool {
 		return this.seek<T>( obj, moveProperties, duration )
 	}
 
-	add( tween: Tween<any> ): number {
-		return this._tweens.push( tween )
+	add( tween: Tween<any> ): TweenPool {
+		this._tweens.push( tween )
+		return this
 	}
 
 	clear(): void {
