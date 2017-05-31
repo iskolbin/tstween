@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script>(function(){var b=window;b.define=function(c,a,d){a=[,b[c]||{}].concat(a.slice(2).map(function(a){b[a]=b[a]||{};return b[a]}));d.apply(null,a);b[c]=a[1]}})();</script>
+		<script src="./dist.js"></script>
+<style>
+body {margin:0; padding: 0; background-color:#ddd;}
+canvas {margin: auto; left: 0; right: 0; top: 0; bottom: 0; position: absolute;}
+</style>
+	</head>
+	<body>
+		<canvas id="canvas" width="640" height="960"></canvas>
+<script>
+var WIDTH = 160;
+var HEIGHT = 50;
+var PADDING = 30;
+var easings = [
+	"StepIn", "StepOut", "Linear",
+	"QuadraticIn", "QuadraticOut", "QuadraticInOut",
+	"CubicIn", "CubicOut", "CubicInOut",
+	"QuarticIn", "QuarticOut", "QuarticInOut",
+	"QuinticIn", "QuinticOut", "QuinticInOut",
+	"SinusoidalIn", "SinusoidalOut", "SinusoidalInOut",
+	"ExponentialIn", "ExponentialOut", "ExponentialInOut",
+	"CircularIn", "CircularOut", "CircularInOut",
+	"ElasticIn", "ElasticOut", "ElasticInOut",
+	"BackIn", "BackOut", "BackInOut",
+	"BounceIn", "BounceOut", "BounceInOut"
+];
+
+function xOffset( i ) {
+	//i = i !== 0 ? i + 2 : 1;
+	return 35 + (WIDTH+PADDING) * (i%3);
+}
+
+function yOffset( i ) {
+	//i = i !== 0 ? i + 2 : 1;
+	return 55+(HEIGHT+PADDING) * Math.floor( i / 3);
+}
+
+var points = easings.map( function(easing,i) {
+	return {
+		x: xOffset(i),
+		y: yOffset(i)
+	};
+});
+
+var tweens = new TweenPool.TweenPool();
+
+var ctx = document.getElementById( "canvas" ).getContext( "2d" );
+easings.forEach( function(easing,i) {
+	tweens.move( points[i], {x: WIDTH, y: HEIGHT}, 1000 ).repeat(Infinity).easing(Easing[easing]).yoyo(true).start();
+});
+
+function render( t ) {
+	tweens.update();
+	ctx.fillStyle = "rgba(221,221,221,0.1)";
+	ctx.fillRect( 0, 0, 640, 960 );
+	ctx.fillStyle = "rgba(32,32,32,1)";
+	ctx.font = "14pt sans-serif";
+	points.forEach( function( point, i ) {
+		ctx.strokeRect( xOffset(i)+1, yOffset(i) - 16, WIDTH + PADDING, HEIGHT + PADDING );
+		ctx.fillRect( point.x, point.y, 10, 10 );
+		ctx.fillText( easings[i], xOffset(i)+2, yOffset(i)+1);
+	});
+	requestAnimationFrame( render );
+}
+
+render();
+
+</script>
+	</body>
+</html>

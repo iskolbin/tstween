@@ -1,19 +1,19 @@
 {
   "name": "tstween",
   "main": "./lib/index.js",
-	"typings": "./lib/index.d.ts",
+  "typings": "./lib/index.d.ts",
   "repository": "github.com/iskolbin/tstween",
   "description": "Tween.js inspired/port to TS",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "MIT",
   "scripts": {
     "build": "rm lib/*; ./node_modules/typescript/bin/tsc",
-		"page": "./node_modules/typescript/bin/tsc -m amd --outFile public/dist.js -d false --sourceMap false",
-    "prepublish": "npm run build"
+    "page": "./node_modules/typescript/bin/tsc -m amd --outFile public/dist.js -d false --sourceMap false",
+    "prepublish-on-install": "npm run build"
   },
-	"dependencies": {
-		"tsnow": "^1.0.1"
-	},
+  "dependencies": {
+    "tsnow": "^1.0.2"
+  },
   "devDependencies": {
     "typescript": "^2.3.2"
   }
