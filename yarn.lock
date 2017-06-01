@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-tsnow@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/tsnow/-/tsnow-1.1.1.tgz#df80de9de4d01b14932a7486d4743c1e645d239d"
+tsnow@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/tsnow/-/tsnow-1.1.2.tgz#17fc174879ec858bc60cf5244ac38057712d63ce"
 
 typescript@^2.3.2:
   version "2.3.4"
